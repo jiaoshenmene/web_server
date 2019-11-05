@@ -1,6 +1,8 @@
 const WebSocket = require('ws');//引入模块
 
-const wss = new WebSocket.Server({ port: 7080 });//创建一个WebSocketServer的实例，监听端口8080
+const wss = new WebSocket.Server({ port: 7080 }, () => {
+    console.log("ws://0.0.0.0:" + 7080);
+});//创建一个WebSocketServer的实例，监听端口8080
 var clients = new Set();
 var sessions = [];
 
@@ -113,7 +115,7 @@ wss.on('connection', function connection(ws) {
             case 'answer':
                 {
                     var msg = {
-                        type = "answer",
+                        type: "answer",
                         data: {
                             from: client_self.id,
                             to: message.to,
@@ -148,14 +150,11 @@ wss.on('connection', function connection(ws) {
                 break;
             case 'keepalive':
                 {
-                    send(client_self, JSON.stringify{ type: 'keepalive', data: {} });
+                    send(client_self, JSON.stringify({ type: 'keepalive', data: {} }));
                 }
                 break;
         }
     });//当收到消息时，在控制台打印出来，并回复一条信息
-
-
-
 });
 
 
