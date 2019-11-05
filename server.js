@@ -36,8 +36,8 @@ function updatePeers() {
     });
 }
 
-wss.on('connection', function connection(ws) {
-    ws.on('message', function (message) {
+wss.on('connection', function connection(client_self) {
+    client_self.on('message', function (message) {
         try {
             message = JSON.parse(message);
             console.log("message.type:: " + message.type + ", \nbody: " + JSON.stringify(message));
