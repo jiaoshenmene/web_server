@@ -21,6 +21,36 @@ var ssl_server = https.createServer(options, app).listen(wss_server_port, () => 
 
 var wss = new ws.Server({ server: ssl_server });
 
+function updatePeers() {
+    var peers = [];
+
+    clients.forEach(function (client) {
+        var peer = {};
+        if (client.hasOwnProperty('id')) {
+            peer.id = client.id;
+        }
+        if (client.hasOwnProperty('name')) {
+            peer.name = client.name;
+        }
+        if (client.hasOwnProperty('user_agent')) {
+            peer.user_agent = client.user_agent;
+        }
+        if (client.hasOwnProperty('session_id')) {
+            peer.session_id = client.session_id;
+        }
+        peers.push(peer);
+    });
+
+    var msg = {
+        type: "peers",
+        data: peers,
+    };
+
+    clients.forEach(function (client) {
+        send(client, JSON.stringify(msg));
+    });
+}
+
 wss.on('connection', onConnection);
 
 function onConnection(client_self, socket) {
@@ -180,12 +210,14 @@ function onConnection(client_self, socket) {
         }
     });
 
-    _send = (client, message) => {
-        try {
-            client.send(message);
-        }catch(e){
-            console.log("Send failure !: " + e);
-        }
-    }
 
+
+}
+
+function send(client, message) {
+    try {
+        client.send(message);
+    } catch (e) {
+        console.log("Send failure !: " + e);
+    }
 }
