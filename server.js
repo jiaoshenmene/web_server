@@ -79,7 +79,7 @@ function onConnection(client_self, socket) {
                     client_self.id = "" + message.id;
                     client_self.name = message.name;
                     client_self.user_agent = message.user_agent;
-                    this.updatePeers();
+                    updatePeers();
                 }
                 break;
             case 'bye':
