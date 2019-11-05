@@ -36,11 +36,42 @@ function updatePeers() {
     });
 }
 
+function onClose(client_self) {
+    console.log('close');
+    var session_id = client_self.session_id;
+    if (session_id !== undefined) {
+        for (let i = 0; i < this.sessions.length; i++) {
+            let item = this.sessions[i];
+            if (item.id == session_id) {
+                this.sessions.splice(i, 1);
+                break;
+            }
+        }
+    }
+
+    var msg = {
+        type: "leave",
+        data: client_self.id,
+    };
+
+
+    clients.forEach(function (client) {
+        if (client != client_self)
+            send(client, JSON.stringify(msg));
+    });
+
+    this.updatePeers();
+}
+
 wss.on('connection', function connection(client_self) {
 
     clients.add(client_self);
 
-    
+    client_self.on("close", (data) => {
+        clients.delete(client_self);
+
+    });
+
     client_self.on('message', function (message) {
         try {
             message = JSON.parse(message);
