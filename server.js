@@ -37,6 +37,10 @@ function updatePeers() {
 }
 
 wss.on('connection', function connection(client_self) {
+
+    clients.add(client_self);
+
+    
     client_self.on('message', function (message) {
         try {
             message = JSON.parse(message);
