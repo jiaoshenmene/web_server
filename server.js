@@ -53,7 +53,7 @@ function updatePeers() {
 
 wss.on('connection', onConnection);
 
-function onConnection(client_self, socket) {
+function onConnection(client_self) {
     console.log('connection');
 
     let _send = this._send;
