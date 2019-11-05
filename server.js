@@ -56,13 +56,11 @@ wss.on('connection', onConnection);
 function onConnection(client_self) {
     console.log('connection');
 
-    let _send = this._send;
-
     clients.add(client_self);
 
     client_self.on("close", (data) => {
         clients.delete(client_self);
-        this.onClose(client_self, data)
+        onClose(client_self, data)
     });
 
     client_self.on("message", message => {
@@ -98,7 +96,7 @@ function onConnection(client_self) {
                                 error: "Invalid session " + message.session_id,
                             },
                         };
-                        _send(client_self, JSON.stringify(msg));
+                        send(client_self, JSON.stringify(msg));
                         return;
                     }
 
@@ -114,7 +112,7 @@ function onConnection(client_self) {
                                         to: (client.id == session.from ? session.to : session.from),
                                     },
                                 };
-                                _send(client, JSON.stringify(msg));
+                                send(client, JSON.stringify(msg));
                             } catch (e) {
                                 console.log("onUserJoin:" + e.message);
                             }
@@ -143,7 +141,7 @@ function onConnection(client_self) {
                                 description: message.description,
                             }
                         }
-                        _send(peer, JSON.stringify(msg));
+                        send(peer, JSON.stringify(msg));
 
                         peer.session_id = message.session_id;
                         client_self.session_id = message.session_id;
@@ -194,7 +192,7 @@ function onConnection(client_self) {
                     clients.forEach(function (client) {
                         if (client.id === "" + message.to && client.session_id === message.session_id) {
                             try {
-                                _send(client, JSON.stringify(msg));
+                                send(client, JSON.stringify(msg));
                             } catch (e) {
                                 console.log("onUserJoin:" + e.message);
                             }
@@ -203,7 +201,7 @@ function onConnection(client_self) {
                 }
                 break;
             case 'keepalive':
-                _send(client_self, JSON.stringify({ type: 'keepalive', data: {} }));
+                send(client_self, JSON.stringify({ type: 'keepalive', data: {} }));
                 break;
             default:
                 console.log("Unhandled message: " + message.type);
